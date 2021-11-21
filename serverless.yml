@@ -25,7 +25,7 @@ stepFunctions:
             Retry:
             - ErrorEquals:
               - States.ALL
-              IntervalSeconds: 5 # 2 seconds
+              IntervalSeconds: 5 # 5 seconds
               MaxAttempts: 3
               BackoffRate: 1
             Catch: 
@@ -43,6 +43,3 @@ stepFunctions:
     
 plugins:
   - serverless-step-functions # need to run $npm install --save-dev serverless-step-functions
-
-
-  

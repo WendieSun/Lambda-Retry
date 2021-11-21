@@ -1,0 +1,1 @@
+serverless deploy --region ap-southeast-2

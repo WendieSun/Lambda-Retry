@@ -1,4 +1,3 @@
-
 exports.handler = function (event) {
     if (event["error"]) {
         throw new Error("error");
