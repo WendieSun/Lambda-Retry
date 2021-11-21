@@ -1,0 +1,48 @@
+# serverless.yml
+service: myService
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  
+functions:
+  hello:
+    handler: hello.handler # required, handler set in AWS Lambda
+    name: hello-function
+
+stepFunctions:
+  stateMachines:
+    helloStepFunc: 
+      name: helloStepFunc
+      definition: 
+        StartAt: HelloLambda
+        States:
+          HelloLambda:
+            Type: Task
+            Resource: 
+              Fn::GetAtt: [hello, Arn]
+            End: true
+            Retry:
+            - ErrorEquals:
+              - States.ALL
+              IntervalSeconds: 5 # 2 seconds
+              MaxAttempts: 3
+              BackoffRate: 1
+            Catch: 
+            - ErrorEquals:
+              - States.ALL
+              Next: SNSNotifcation
+          SNSNotifcation:
+            Type: Task
+            Resource: arn:aws:states:::sns:publish
+            Parameters:
+              Subject: Hello Lambda failed after retries
+              Message.$: $
+              TopicArn: arn:aws:sns:ap-southeast-2:330483996259:HelloFuncFailed
+            End: true
+    
+plugins:
+  - serverless-step-functions # need to run $npm install --save-dev serverless-step-functions
+
+
+  
